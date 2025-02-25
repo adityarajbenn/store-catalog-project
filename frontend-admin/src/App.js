@@ -20,6 +20,7 @@ const App = () => {
 
       <Container sx={{ marginTop: 4 }}>
         <Routes>
+          <Route path="/" element={<Navigate to="/stores" replace />} />
           <Route path="/stores" element={<ManageStores />} />
           <Route path="/products" element={<ManageProducts />} />
           <Route path="/user" element={<User />} />
