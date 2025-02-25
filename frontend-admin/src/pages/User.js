@@ -7,24 +7,43 @@ const User = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/products`);
-      setProducts(response.data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  };
+  const [stores, setStores] = useState([]); // Store dropdown options
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/products`);
+        setProducts(response.data);
+
+        // Extract unique stores from products
+        const uniqueStores = [];
+        const storeMap = new Map();
+
+        response.data.forEach(product => {
+          product.stores.forEach(store => {
+            if (!storeMap.has(store.storeId)) {
+              storeMap.set(store.storeId, store.storeName);
+              uniqueStores.push({ storeId: store.storeId, storeName: store.storeName });
+            }
+          });
+        });
+
+        setStores(uniqueStores);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
     fetchProducts();
   }, []);
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const stores = selectedStores.length === 0 ? product.stores : product.stores.filter(store => selectedStores.includes(store.storeId));
-    return matchesSearch && stores.length > 0;
+    const storesFiltered = selectedStores.length === 0 
+      ? product.stores 
+      : product.stores.filter(store => selectedStores.includes(store.storeId));
+
+    return matchesSearch && storesFiltered.length > 0;
   }).map(product => {
     const minPrice = Math.min(...product.stores.map(store => store.price));
     const maxPrice = Math.max(...product.stores.map(store => store.price));
@@ -51,11 +70,13 @@ const User = () => {
             onChange={handleStoreChange}
             displayEmpty
             fullWidth
-            renderValue={(selected) => selected.length ? selected.join(', ') : 'All Stores'}
+            renderValue={(selected) => selected.length ? 
+              stores.filter(store => selected.includes(store.storeId)).map(store => store.storeName).join(', ') 
+              : 'All Stores'}
           >
-            <MenuItem value="store1">Tech World</MenuItem>
-            <MenuItem value="store2">Gadget Store</MenuItem>
-            <MenuItem value="store3">Digital Zone</MenuItem>
+            {stores.map(store => (
+              <MenuItem key={store.storeId} value={store.storeId}>{store.storeName}</MenuItem>
+            ))}
           </Select>
 
           <TextField
@@ -83,7 +104,7 @@ const ProductList = ({ products, onViewDetails }) => {
         <Typography variant="h6">No products found.</Typography>
       ) : (
         products.map((product) => (
-          <Grid item xs={12} sm={6} md={4} key={product.name}>
+          <Grid item xs={12} sm={6} md={4} key={product._id}>
             <Card>
               <CardContent>
                 <Typography variant="h6">{product.name}</Typography>
