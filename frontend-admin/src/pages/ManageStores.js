@@ -5,7 +5,6 @@ import { Grid, Card, CardContent, Typography } from '@mui/material';
 
 const ManageStores = () => {
   const [stores, setStores] = useState([]);
-  console.log(process.env.REACT_APP_API_BASE_URL,'alckanclkaj')
 
   useEffect(() => {
     axios.get('/stores')
