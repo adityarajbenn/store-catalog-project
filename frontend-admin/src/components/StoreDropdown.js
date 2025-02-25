@@ -5,7 +5,7 @@ const StoreDropdown = ({ selectedStores, setSelectedStores }) => {
   const [stores, setStores] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/stores')
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/stores`)
       .then(res => setStores(res.data))
       .catch(err => console.error('Error fetching stores:', err));
   }, []);

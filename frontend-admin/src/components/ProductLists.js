@@ -6,7 +6,7 @@ const ProductLists = ({ selectedStores }) => {
 
   useEffect(() => {
     if (selectedStores.length > 0) {
-      axios.get(`http://localhost:5000/products?storeIds=${selectedStores.join(',')}`)
+      axios.get(`${process.env.REACT_APP_API_BASE_URL}/products?storeIds=${selectedStores.join(',')}`)
         .then(res => setProducts(res.data))
         .catch(err => console.error('Error fetching products:', err));
     }

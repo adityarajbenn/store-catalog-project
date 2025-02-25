@@ -5,6 +5,13 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const cors = require('cors');
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+}));
+
 const storeRoutes = require('./routes/storeRoutes');
 const productRoutes = require('./routes/productRoutes');
 

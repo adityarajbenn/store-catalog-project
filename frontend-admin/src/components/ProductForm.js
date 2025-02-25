@@ -24,7 +24,7 @@ const ProductForm = () => {
     }
   
     try {
-      const response = await axios.post('http://localhost:5000/products', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/products`, {
         name,
         category,
         storeId: selectedStore.storeId,
